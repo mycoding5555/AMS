@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Supervisor | AMS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-light">
+
+<div class="d-flex">
+    {{-- Sidebar --}}
+    <nav class="bg-primary text-white p-3" style="width:240px; min-height:100vh;">
+        <h5 class="mb-4">👨‍💼 Supervisor</h5>
+
+        <ul class="nav flex-column gap-2">
+            <li><a href="{{ route('supervisor.dashboard') }}" class="nav-link text-white">Dashboard</a></li>
+            <li><a href="{{ route('supervisor.customers.index') }}" class="nav-link text-white">Customers</a></li>
+            <li><a href="{{ route('supervisor.rentals.index') }}" class="nav-link text-white">Rentals</a></li>
+            <li><a href="{{ route('supervisor.payments.index') }}" class="nav-link text-white">Payments</a></li>
+        </ul>
+    </nav>
+
+    {{-- Content --}}
+    <div class="flex-grow-1">
+        <nav class="navbar bg-white shadow-sm px-4">
+            <span>Welcome, {{ auth()->user()->name }}</span>
+
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button class="btn btn-outline-danger btn-sm">Logout</button>
+            </form>
+        </nav>
+
+        <main class="p-4">
+            @yield('content')
+        </main>
+    </div>
+</div>
+
+</body>
+</html>
