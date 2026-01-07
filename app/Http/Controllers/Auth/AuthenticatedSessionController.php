@@ -8,9 +8,12 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use App\Models\User;
+use App\Models\Customer;
 
 class AuthenticatedSessionController extends Controller
 {
+    
     /**
      * Display the login view.
      */
@@ -27,6 +30,16 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $request->session()->regenerate();
+
+        $user = Auth::user();
+        
+        if ($user->hasRole('admin')) {
+            return redirect()->intended(route('admin.dashboard', absolute: false));
+        } elseif ($user->hasRole('supervisor')) {
+            return redirect()->intended(route('supervisor.customers.index', absolute: false));
+        } elseif ($user->hasRole('tenant')) {
+            return redirect()->intended(route('tenant.dashboard', absolute: false));
+        }
 
         return redirect()->intended(route('dashboard', absolute: false));
     }
