@@ -13,8 +13,14 @@ return new class extends Migration
     {
         Schema::create('expenses', function (Blueprint $table) {
             $table->id();
+            $table->string('type'); // fixed / variable
+            $table->string('category'); // maintenance, salary, utility
+            $table->decimal('amount', 10, 2);
+            $table->integer('month');
+            $table->integer('year');
             $table->timestamps();
         });
+
     }
 
     /**

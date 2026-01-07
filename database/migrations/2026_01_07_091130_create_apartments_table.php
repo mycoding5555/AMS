@@ -10,11 +10,16 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-    {
+        {
         Schema::create('apartments', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('floor_id')->constrained()->cascadeOnDelete();
+            $table->string('apartment_number');
+            $table->decimal('monthly_rent', 10, 2);
+            $table->string('status')->default('available');
             $table->timestamps();
         });
+
     }
 
     /**

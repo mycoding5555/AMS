@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('floors', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+       Schema::create('floors', function (Blueprint $table) {
+        $table->id();
+        $table->string('name'); // Floor 1, Floor 2
+        $table->timestamps();
+});
+
     }
 
     /**

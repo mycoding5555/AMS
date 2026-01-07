@@ -11,10 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('customers', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+    Schema::create('customers', function (Blueprint $table) {
+    $table->id();
+    $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+    $table->string('name');
+    $table->date('date_of_birth')->nullable();
+    $table->string('place_of_birth')->nullable();
+    $table->string('contact_number');
+    $table->string('id_photo')->nullable();
+    $table->string('customer_photo')->nullable();
+    $table->string('status')->default('active');
+    $table->timestamps();
+});
+
     }
 
     /**

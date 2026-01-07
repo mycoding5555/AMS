@@ -6,5 +6,20 @@ use Illuminate\Database\Eloquent\Model;
 
 class Apartment extends Model
 {
-    //
+        protected $fillable = [
+        'floor_id',
+        'apartment_number',
+        'monthly_rent',
+        'status'
+    ];
+
+    public function floor()
+    {
+        return $this->belongsTo(Floor::class);
+    }
+
+    public function rentals()
+    {
+        return $this->hasMany(Rental::class);
+    }
 }

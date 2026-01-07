@@ -13,8 +13,15 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('rental_id')->constrained()->cascadeOnDelete();
+            $table->decimal('amount', 10, 2);
+            $table->string('payment_method'); // cash, online
+            $table->string('payment_status')->default('pending');
+            $table->string('transaction_reference')->nullable();
+            $table->timestamp('paid_at')->nullable();
             $table->timestamps();
         });
+
     }
 
     /**

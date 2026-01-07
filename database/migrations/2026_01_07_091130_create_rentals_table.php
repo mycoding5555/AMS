@@ -11,10 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('rentals', function (Blueprint $table) {
+       Schema::create('rentals', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('customer_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('apartment_id')->constrained()->cascadeOnDelete();
+            $table->date('start_date');
+            $table->date('end_date')->nullable();
+            $table->decimal('rent_amount', 10, 2);
+            $table->decimal('deposit', 10, 2)->nullable();
+            $table->string('status')->default('active');
             $table->timestamps();
         });
+
     }
 
     /**
