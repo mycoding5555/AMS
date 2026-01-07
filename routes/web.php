@@ -12,15 +12,17 @@ Route::get('/', function () {
 
 Route::get('/dashboard', function () {
     return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth', 'verified', 'check.status'])->name('dashboard');
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'check.status'])->group(function () {
 
     Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [Admin\DashboardController::class, 'index'])->name('dashboard');
         Route::resource('users', Admin\UserController::class);
         Route::resource('apartments', Admin\ApartmentController::class);
         Route::resource('expenses', Admin\ExpenseController::class);
+        Route::get('users', [Admin\UserController::class, 'index'])->name('users.index');
+        Route::put('users/{user}', [Admin\UserController::class, 'update'])->name('users.update');
     });
 
     Route::middleware(['role:supervisor'])->prefix('supervisor')->name('supervisor.')->group(function () {
