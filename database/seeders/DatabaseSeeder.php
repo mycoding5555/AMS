@@ -20,12 +20,18 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // Create admin user
-        $admin = User::factory()->create([
-            'name' => 'admin',
-            'email' => 'admin@gmail.com',
-            'password' => bcrypt('12345678')
-        ]);
+        $admin = User::updateOrCreate(
+            ['email' => 'admin@gmail.com'],
+            [
+                'name' => 'admin',
+                'password' => bcrypt('12345678'),
+                'email_verified_at' => now(),
+                'status' => 'active'
+            ]
+        );
         
-        $admin->assignRole('admin');
+        if (!$admin->hasRole('admin')) {
+            $admin->assignRole('admin');
+        }
     }
 }
