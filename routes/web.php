@@ -4,7 +4,8 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin;
 use App\Http\Controllers\Supervisor;
-use App\Http\Controllers\Tenant;    
+use App\Http\Controllers\Tenant;
+
 
 
 
@@ -37,6 +38,7 @@ Route::middleware(['auth', 'check.status'])->group(function () {
     });
 
     Route::middleware(['role:supervisor'])->prefix('supervisor')->name('supervisor.')->group(function () {
+        Route::get('/dashboard', [Supervisor\DashboardController::class, 'index'])->name('dashboard');
         Route::resource('customers', Supervisor\CustomerController::class);
         Route::resource('rentals', Supervisor\RentalController::class);
         Route::resource('payments', Supervisor\PaymentController::class);
