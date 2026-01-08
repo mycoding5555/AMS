@@ -21,6 +21,7 @@ class ApartmentController extends Controller
     {
         $request->validate([
             'floor_id' => 'required|exists:floors,id',
+            'room_number' => 'required',
             'apartment_number' => 'required',
             'monthly_rent' => 'required|numeric'
         ]);
@@ -33,7 +34,7 @@ class ApartmentController extends Controller
     public function update(Request $request, Apartment $apartment)
     {
         $apartment->update($request->only([
-            'apartment_number','monthly_rent','status'
+            'room_number','apartment_number','monthly_rent','status'
         ]));
 
         return back()->with('success','Room updated');
