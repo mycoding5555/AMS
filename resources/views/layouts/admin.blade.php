@@ -21,7 +21,8 @@
         <ul class="nav flex-column gap-2">
             <li><a href="{{ route('admin.dashboard') }}" class="nav-link text-white">Dashboard</a></li>
             <li><a href="{{ route('admin.users.index') }}" class="nav-link text-white">Users</a></li>
-            <li><a href="{{ route('admin.tenants.index') }}" class="nav-link text-white">Room & Tenant</a></li>
+            <li><a href="{{ route('admin.rooms.index') }}" class="nav-link text-white">Room</a></li>
+            <li><a href="{{ route('admin.tenants.index') }}" class="nav-link text-white">Tenant</a></li>
             <li><a href="{{ route('admin.apartments.index') }}" class="nav-link text-white">Apartments</a></li>
             <li><a href="{{ route('admin.expenses.index') }}" class="nav-link text-white">Expenses</a></li>
         </ul>

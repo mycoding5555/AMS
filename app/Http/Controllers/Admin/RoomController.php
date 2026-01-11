@@ -18,7 +18,9 @@ class RoomController extends Controller
         return view('admin.rooms.index', [
             'rooms' => Apartment::with('floor', 'supervisor')->paginate(10),
             'floors' => Floor::all(),
-            'supervisors' => User::role('supervisor')->get()
+            'supervisors' => User::role('supervisor')->get(),
+            'recentApartments' => Apartment::with('floor', 'supervisor')->get()
+            
         ]);
     }
 
