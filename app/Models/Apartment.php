@@ -11,12 +11,18 @@ class Apartment extends Model
         'room_number',
         'apartment_number',
         'monthly_rent',
-        'status'
+        'status',
+        'supervisor_id'
     ];
 
     public function floor()
     {
         return $this->belongsTo(Floor::class);
+    }
+
+    public function supervisor()
+    {
+        return $this->belongsTo(User::class, 'supervisor_id');
     }
 
     public function rentals()

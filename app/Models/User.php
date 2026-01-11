@@ -56,4 +56,10 @@ class User extends Authenticatable
     {
         return $this->hasOne(Customer::class);
     }
+
+    // Define relationship for supervisor managing apartments
+    public function assignedApartments()
+    {
+        return $this->hasMany(Apartment::class, 'supervisor_id');
+    }
 }

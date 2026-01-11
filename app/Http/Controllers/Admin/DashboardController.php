@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Payment;
 use App\Models\Apartment;
+use App\Models\User;
 
 class DashboardController extends Controller
 {
@@ -17,10 +18,11 @@ class DashboardController extends Controller
         'totalApartments' => Apartment::count(),
         'occupiedApartments' => Apartment::where('status','occupied')->count(),
         'availableApartments' => Apartment::where('status','available')->count(),
+        'totalUsers' => User::count(),
         'occupancyRate' => Apartment::count() > 0
             ? round((Apartment::where('status','occupied')->count() / Apartment::count()) * 100, 2)
             : 0,
-        'recentApartments' => Apartment::with('floor')->latest()->take(5)->get(),
+        'recentApartments' => Apartment::with('floor', 'supervisor')->latest()->take(5)->get(),
 
         'months' => ['Jan','Feb','Mar','Apr','May','Jun'],
         'monthlyRevenue' => [1000, 1200, 1400, 1600, 1800, 2000],

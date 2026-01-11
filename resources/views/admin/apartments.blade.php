@@ -21,7 +21,7 @@
 
 <form method="POST" action="{{ route('admin.apartments.store') }}" class="row g-2 mb-3">
     @csrf
-    <div class="col-md-3">
+    <div class="col-md-2">
         <select name="floor_id" class="form-select" required>
             <option value="">Select Floor</option>
             @foreach($floors as $floor)
@@ -29,7 +29,7 @@
             @endforeach
         </select>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-2">
         <input name="room_number" class="form-control" placeholder="Room Number" required>
     </div>
     <div class="col-md-2">
@@ -37,6 +37,14 @@
     </div>
     <div class="col-md-2">
         <input name="monthly_rent" class="form-control" placeholder="Rent" required>
+    </div>
+    <div class="col-md-2">
+        <select name="supervisor_id" class="form-select">
+            <option value="">Assign Supervisor</option>
+            @foreach($supervisors as $supervisor)
+                <option value="{{ $supervisor->id }}">{{ $supervisor->name }}</option>
+            @endforeach
+        </select>
     </div>
     <div class="col-md-2">
         <button class="btn btn-primary">Add Room</button>
@@ -49,6 +57,7 @@
     <th>Room Number</th>
     <th>Apartment No</th>
     <th>Rent</th>
+    <th>Supervisor</th>
     <th>Status</th>
     <th>Action</th>
 </tr>
@@ -61,6 +70,14 @@
 <td><input name="room_number" value="{{ $room->room_number }}" class="form-control" required></td>
 <td><input name="apartment_number" value="{{ $room->apartment_number }}" class="form-control" required></td>
 <td><input name="monthly_rent" value="{{ $room->monthly_rent }}" class="form-control" required></td>
+<td>
+    <select name="supervisor_id" class="form-select">
+        <option value="">No Supervisor</option>
+        @foreach($supervisors as $supervisor)
+            <option value="{{ $supervisor->id }}" {{ $room->supervisor_id == $supervisor->id ? 'selected' : '' }}>{{ $supervisor->name }}</option>
+        @endforeach
+    </select>
+</td>
 <td>
     <select name="status" class="form-select">
         <option value="available" {{ $room->status=='available'?'selected':'' }}>Available</option>
