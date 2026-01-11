@@ -1,3 +1,42 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Apple-like minimal design system */
+
+@layer base {
+    * {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+        @apply bg-apple-bg text-apple-text;
+    }
+}
+
+@layer components {
+    .btn-apple {
+        @apply px-6 py-2.5 rounded-apple font-medium text-sm transition-all duration-200 hover:shadow-apple-md;
+    }
+
+    .btn-apple-primary {
+        @apply btn-apple bg-apple-blue text-white hover:bg-apple-blue-hover;
+    }
+
+    .btn-apple-secondary {
+        @apply btn-apple bg-white text-apple-text border border-apple-border hover:bg-gray-50;
+    }
+
+    .card-apple {
+        @apply bg-white rounded-apple border border-apple-border/50 shadow-apple-sm p-6;
+    }
+
+    .section-header {
+        @apply flex items-center gap-3 mb-6;
+    }
+
+    .section-icon {
+        @apply w-8 h-8 text-apple-blue flex items-center justify-center bg-apple-bg rounded-apple;
+    }
+}

@@ -22,7 +22,7 @@ class DashboardController extends Controller
         'occupancyRate' => Apartment::count() > 0
             ? round((Apartment::where('status','occupied')->count() / Apartment::count()) * 100, 2)
             : 0,
-        'recentApartments' => Apartment::with('floor', 'supervisor')->latest()->take(5)->get(),
+        'recentApartments' => Apartment::with('floor', 'supervisor')->get(),
 
         'months' => ['Jan','Feb','Mar','Apr','May','Jun'],
         'monthlyRevenue' => [1000, 1200, 1400, 1600, 1800, 2000],

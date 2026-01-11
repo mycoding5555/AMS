@@ -15,20 +15,29 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100">
+        <div class="min-h-screen bg-apple-bg">
             @include('layouts.navigation')
 
             <!-- Page Heading -->
             @isset($header)
-                <header class="bg-white shadow">
+                <header class="bg-white border-b border-apple-border/50">
                     <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                        {{ $header }}
+                        <div class="flex items-center gap-3">
+                            @isset($headerIcon)
+                                <div class="section-icon">
+                                    <x-icon :icon="$headerIcon" size="lg" class="text-apple-blue" />
+                                </div>
+                            @endisset
+                            <div>
+                                {{ $header }}
+                            </div>
+                        </div>
                     </div>
                 </header>
             @endisset
 
             <!-- Page Content -->
-            <main>
+            <main class="py-section">
                 {{ $slot }}
             </main>
         </div>

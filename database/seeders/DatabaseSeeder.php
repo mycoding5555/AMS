@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RolePermissionSeeder::class,
             FloorSeeder::class,
+            ApartmentSeeder::class,
         ]);
 
         // Create admin user

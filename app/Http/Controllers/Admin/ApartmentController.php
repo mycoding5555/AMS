@@ -49,5 +49,11 @@ class ApartmentController extends Controller
 
         return back()->with('success','Room updated successfully');
     }
-}
 
+    public function destroy(Apartment $apartment)
+    {
+        $apartment->delete();
+        return back()->with('success','Room deleted successfully');
+    }
+
+}

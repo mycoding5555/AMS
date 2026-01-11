@@ -25,6 +25,8 @@ Route::middleware(['auth', 'check.status'])->group(function () {
         Route::get('/dashboard', [Admin\DashboardController::class, 'index'])->name('dashboard');
         Route::resource('users', Admin\UserController::class);
         Route::resource('apartments', Admin\ApartmentController::class);
+        Route::resource('rooms', Admin\RoomController::class);
+        Route::resource('tenants', Admin\TenantController::class);
         Route::resource('expenses', Admin\ExpenseController::class);
         Route::get('users', [Admin\UserController::class, 'index'])->name('users.index');
         Route::put('users/{user}', [Admin\UserController::class, 'update'])->name('users.update');

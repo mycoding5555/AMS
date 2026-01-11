@@ -29,4 +29,9 @@ class Apartment extends Model
     {
         return $this->hasMany(Rental::class);
     }
+
+    public function tenants()
+    {
+        return $this->hasMany(Tenant::class);
+    }
 }

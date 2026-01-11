@@ -15,10 +15,15 @@ class FloorSeeder extends Seeder
      */
     public function run(): void
     {
-        $floors = ['Ground Floor', 'First Floor', 'Second Floor', 'Third Floor', 'Fourth Floor'];
-        
+        $floors = [
+            ['name' => 'Ground Floor'],
+            ['name' => 'First Floor'],
+            ['name' => 'Second Floor'],
+            ['name' => 'Third Floor'],
+        ];
+
         foreach ($floors as $floor) {
-            Floor::firstOrCreate(['name' => $floor]);
+            Floor::create($floor);
         }
     }
 }
