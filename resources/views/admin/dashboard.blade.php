@@ -45,6 +45,7 @@
             <div>
                 <p style="color: #86868b; font-size: 14px; font-weight: 500; margin: 0 0 12px 0;">Total Rooms</p>
                 <h2 style="color: #1d1d1f; font-size: 32px; font-weight: 600; margin: 0;">{{ $totalApartments }}</h2>
+                <p style="color: #86868b; font-size: 12px; margin: 8px 0 0 0;">{{ $availableApartments }} remaining</p>
             </div>
             <div style="width: 56px; height: 56px; background: #f5f5f7; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #0071e3;">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -75,15 +76,19 @@
 
 
 {{-- Charts --}}
-<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 20px;">
     <div style="background: white; border: 1px solid #d5d5d7; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.12);">
         <h5 style="font-weight: 600; color: #1d1d1f; margin: 0 0 20px 0;">Monthly Revenue</h5>
-        <canvas id="revenueChart"></canvas>
+        <div style="position: relative; min-height: 400px;">
+            <canvas id="revenueChart"></canvas>
+        </div>
     </div>
 
     <div style="background: white; border: 1px solid #d5d5d7; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.12);">
         <h5 style="font-weight: 600; color: #1d1d1f; margin: 0 0 20px 0;">Payment Status</h5>
-        <canvas id="paymentChart"></canvas>
+        <div style="position: relative; min-height: 400px;">
+            <canvas id="paymentChart"></canvas>
+        </div>
     </div>
 </div>
 
@@ -112,6 +117,7 @@ new Chart(revenueCtx, {
     },
     options: {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
             legend: {
                 display: false
@@ -155,6 +161,7 @@ new Chart(paymentCtx, {
     },
     options: {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
             legend: {
                 position: 'bottom',

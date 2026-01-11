@@ -7,20 +7,24 @@ use Illuminate\Http\Request;
 use App\Models\Payment;
 use App\Models\Apartment;
 use App\Models\User;
+use App\Models\Tenant;
 
 class DashboardController extends Controller
 {
    public function index()
 {
+    $totalApartments = Apartment::count();
+    $occupiedApartments = Apartment::occupied()->count();
+    
     return view('admin.dashboard', [
         'totalRevenue' => Payment::where('payment_status','paid')->sum('amount'),
         'overduePayments' => Payment::where('payment_status','overdue')->count(),
-        'totalApartments' => Apartment::count(),
-        'occupiedApartments' => Apartment::where('status','occupied')->count(),
-        'availableApartments' => Apartment::where('status','available')->count(),
+        'totalApartments' => $totalApartments,
+        'occupiedApartments' => $occupiedApartments,
+        'availableApartments' => $totalApartments - $occupiedApartments,
         'totalUsers' => User::count(),
-        'occupancyRate' => Apartment::count() > 0
-            ? round((Apartment::where('status','occupied')->count() / Apartment::count()) * 100, 2)
+        'occupancyRate' => $totalApartments > 0
+            ? round(($occupiedApartments / $totalApartments) * 100, 2)
             : 0,
         'recentApartments' => Apartment::with('floor', 'supervisor')->get(),
 
