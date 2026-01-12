@@ -30,14 +30,18 @@ class ApartmentSeeder extends Seeder
                     $roomNumber = str_pad($i, 2, '0', STR_PAD_LEFT); // 01-08
                     $apartmentNumber = $prefix . $roomNumber; // A01-A08, B01-B08, etc.
 
-                    Apartment::create([
-                        'floor_id' => $floor->id,
-                        'room_number' => $roomNumber,
-                        'apartment_number' => $apartmentNumber,
-                        'monthly_rent' => $monthlyRent,
-                        'status' => 'available',
-                        'supervisor_id' => null,
-                    ]);
+                    Apartment::firstOrCreate(
+                        [
+                            'floor_id' => $floor->id,
+                            'room_number' => $roomNumber,
+                        ],
+                        [
+                            'apartment_number' => $apartmentNumber,
+                            'monthly_rent' => $monthlyRent,
+                            'status' => 'available',
+                            'supervisor_id' => null,
+                        ]
+                    );
                 }
             }
         }
