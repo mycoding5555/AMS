@@ -28,6 +28,7 @@ Route::middleware(['auth', 'check.status'])->group(function () {
         Route::resource('rooms', Admin\RoomController::class);
         Route::resource('tenants', Admin\TenantController::class);
         Route::resource('expenses', Admin\ExpenseController::class);
+        Route::get('expenses/breakeven', [Admin\ExpenseController::class, 'breakeven'])->name('expenses.breakeven');
         Route::get('users', [Admin\UserController::class, 'index'])->name('users.index');
         Route::put('users/{user}', [Admin\UserController::class, 'update'])->name('users.update');
         Route::get('floors', [Admin\FloorController::class, 'index'])->name('floors.index');

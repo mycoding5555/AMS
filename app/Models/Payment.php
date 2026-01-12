@@ -23,4 +23,9 @@ class Payment extends Model
     {
         return $this->belongsTo(Rental::class);
     }
+
+    public function account()
+    {
+        return $this->hasOne(Account::class);
+    }
 }
