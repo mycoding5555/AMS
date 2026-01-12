@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Tenant;
 use App\Models\Apartment;
+use App\Models\Account;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 
 class TenantController extends Controller
 {
@@ -203,13 +205,67 @@ class TenantController extends Controller
         // Archive the tenant
         $tenant->archive($validated);
 
+        // Get move out date for transaction
+        $moveOutDate = Carbon::parse($validated['move_out_date']);
+
+        // Add rental income to accounts if rent was paid
+        if ($validated['total_rent_paid'] > 0) {
+            Account::create([
+                'account_type' => 'income',
+                'category' => 'rental_income',
+                'cost_type' => 'income',
+                'description' => 'Final rent payment from tenant: ' . $tenant->name . ' (Room: ' . ($tenant->apartment->apartment_number ?? 'N/A') . ')',
+                'amount' => $validated['total_rent_paid'],
+                'transaction_date' => $moveOutDate,
+                'month' => $moveOutDate->month,
+                'year' => $moveOutDate->year,
+                'user_id' => auth()->id(),
+                'reference_number' => 'TNT-' . str_pad($tenant->id, 6, '0', STR_PAD_LEFT),
+                'notes' => 'Tenant leave - Stay duration: ' . $tenant->getStayDurationFormatted()
+            ]);
+        }
+
+        // Add utility charges as income if paid
+        if ($validated['final_utility_charges'] > 0) {
+            Account::create([
+                'account_type' => 'income',
+                'category' => 'other_income',
+                'cost_type' => 'income',
+                'description' => 'Utility charges from tenant: ' . $tenant->name . ' (Room: ' . ($tenant->apartment->apartment_number ?? 'N/A') . ')',
+                'amount' => $validated['final_utility_charges'],
+                'transaction_date' => $moveOutDate,
+                'month' => $moveOutDate->month,
+                'year' => $moveOutDate->year,
+                'user_id' => auth()->id(),
+                'reference_number' => 'UTL-' . str_pad($tenant->id, 6, '0', STR_PAD_LEFT),
+                'notes' => 'Tenant leave utility charges'
+            ]);
+        }
+
+        // Add other charges as income if paid
+        if ($validated['final_other_charges'] > 0) {
+            Account::create([
+                'account_type' => 'income',
+                'category' => 'other_income',
+                'cost_type' => 'income',
+                'description' => 'Other charges from tenant: ' . $tenant->name . ' (Room: ' . ($tenant->apartment->apartment_number ?? 'N/A') . ')',
+                'amount' => $validated['final_other_charges'],
+                'transaction_date' => $moveOutDate,
+                'month' => $moveOutDate->month,
+                'year' => $moveOutDate->year,
+                'user_id' => auth()->id(),
+                'reference_number' => 'OTH-' . str_pad($tenant->id, 6, '0', STR_PAD_LEFT),
+                'notes' => 'Tenant leave other charges (damages, cleaning, etc.)'
+            ]);
+        }
+
         // Optionally generate PDF automatically
         if ($request->has('generate_invoice')) {
             return redirect()->route('admin.tenants.archived.invoice.download', $tenant)
-                ->with('success', 'Tenant has been archived successfully! Invoice is downloading.');
+                ->with('success', 'Tenant has been archived and income recorded successfully! Invoice is downloading.');
         }
 
         return redirect()->route('admin.tenants.archived.index')
-            ->with('success', 'Tenant has left and been archived successfully!');
+            ->with('success', 'Tenant has left, income recorded, and archived successfully!');
     }
 }
