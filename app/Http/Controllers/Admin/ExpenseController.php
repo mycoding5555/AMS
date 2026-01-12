@@ -41,8 +41,8 @@ class ExpenseController extends Controller
         // Break-even analysis
         $breakEvenData = $this->calculateBreakEven($year);
 
-        // Sync payments from tenants as income
-        $this->syncPaymentsAsIncome($month, $year);
+        // Count unsynced payments
+        $unsyncedPayments = $this->getUnsyncedPaymentsCount($month, $year);
 
         return view('admin.expenses.index', compact(
             'accounts',
@@ -55,7 +55,8 @@ class ExpenseController extends Controller
             'breakEvenData',
             'month',
             'year',
-            'view'
+            'view',
+            'unsyncedPayments'
         ));
     }
 
@@ -240,17 +241,34 @@ class ExpenseController extends Controller
     }
 
     /**
+     * Count unsynced payments.
+     */
+    private function getUnsyncedPaymentsCount($month, $year)
+    {
+        return Payment::where('payment_status', 'paid')
+            ->whereMonth('paid_at', $month)
+            ->whereYear('paid_at', $year)
+            ->whereDoesntHave('account')
+            ->count();
+    }
+
+    /**
      * Sync tenant payments as income entries.
      */
-    private function syncPaymentsAsIncome($month, $year)
+    public function syncPayments(Request $request)
     {
+        $month = $request->get('month', now()->month);
+        $year = $request->get('year', now()->year);
+
         // Get payments that are not yet synced
         $payments = Payment::where('payment_status', 'paid')
             ->whereMonth('paid_at', $month)
             ->whereYear('paid_at', $year)
             ->whereDoesntHave('account')
+            ->with(['rental.customer'])
             ->get();
 
+        $synced = 0;
         foreach ($payments as $payment) {
             Account::create([
                 'account_type' => 'income',
@@ -264,6 +282,10 @@ class ExpenseController extends Controller
                 'payment_id' => $payment->id,
                 'reference_number' => $payment->transaction_reference
             ]);
+            $synced++;
         }
+
+        return redirect()->route('admin.expenses.index', ['month' => $month, 'year' => $year])
+            ->with('success', $synced > 0 ? "Successfully synced {$synced} payment(s) as income." : 'No new payments to sync.');
     }
 }

@@ -8,7 +8,7 @@
             <h1 style="font-size: 32px; font-weight: 600; color: #1d1d1f; margin: 0;">Accounts & Expenses</h1>
             <p style="color: #86868b; margin: 8px 0 0 0;">Manage income, expenses, and financial tracking</p>
         </div>
-        <div style="display: flex; gap: 12px;">
+        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
             <a href="{{ route('admin.expenses.create') }}" style="padding: 12px 24px; background: #0071e3; color: white; border-radius: 8px; text-decoration: none; font-weight: 600;">
                 <i class="bi bi-plus-lg me-2"></i>Add Entry
             </a>
@@ -18,6 +18,29 @@
         </div>
     </div>
 </div>
+
+{{-- Sync Payments Alert --}}
+@if($unsyncedPayments > 0)
+<div style="background: #fff3cd; border: 1px solid #ffc107; border-radius: 12px; padding: 16px; margin-bottom: 24px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <i class="bi bi-info-circle" style="font-size: 24px; color: #856404;"></i>
+            <div>
+                <p style="font-weight: 600; color: #856404; margin: 0;">{{ $unsyncedPayments }} tenant payment(s) ready to sync</p>
+                <p style="color: #856404; margin: 4px 0 0 0; font-size: 14px;">Import tenant payments as income entries for accurate tracking.</p>
+            </div>
+        </div>
+        <form method="POST" action="{{ route('admin.expenses.sync-payments') }}">
+            @csrf
+            <input type="hidden" name="month" value="{{ $month }}">
+            <input type="hidden" name="year" value="{{ $year }}">
+            <button type="submit" style="padding: 10px 20px; background: #856404; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                <i class="bi bi-arrow-repeat me-2"></i>Sync Now
+            </button>
+        </form>
+    </div>
+</div>
+@endif
 
 {{-- Filter Section --}}
 <div style="background: white; border: 1px solid #d5d5d7; border-radius: 12px; padding: 20px; margin-bottom: 24px;">
