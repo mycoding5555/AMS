@@ -18,16 +18,26 @@
                 <p style="color: #86868b; margin: 8px 0 0 0;">Manage tenants for room {{ $room->room_number }}</p>
             @else
                 <h1 style="font-size: 32px; font-weight: 600; color: #1d1d1f; margin: 0;">All Tenants</h1>
-                <p style="color: #86868b; margin: 8px 0 0 0;">View and manage all tenants</p>
+                <p style="color: #86868b; margin: 8px 0 0 0;">View and manage all active tenants</p>
             @endif
         </div>
-        <a href="{{ route('admin.tenants.create') }}" style="padding: 12px 24px; background: #0071e3; color: white; border: none; border-radius: 8px; text-decoration: none; font-weight: 500; font-size: 14px; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#0077ed'" onmouseout="this.style.backgroundColor='#0071e3'">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-            </svg>
-            Add Tenant
-        </a>
+        <div style="display: flex; gap: 12px;">
+            <a href="{{ route('admin.tenants.archived.index') }}" style="padding: 12px 24px; background: white; color: #86868b; border: 1px solid #d5d5d7; border-radius: 8px; text-decoration: none; font-weight: 500; font-size: 14px; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#f5f5f7'" onmouseout="this.style.backgroundColor='white'">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 8v13H3V8"></path>
+                    <path d="M1 3h22v5H1z"></path>
+                    <path d="M10 12h4"></path>
+                </svg>
+                Archived
+            </a>
+            <a href="{{ route('admin.tenants.create') }}" style="padding: 12px 24px; background: #0071e3; color: white; border: none; border-radius: 8px; text-decoration: none; font-weight: 500; font-size: 14px; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#0077ed'" onmouseout="this.style.backgroundColor='#0071e3'">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Add Tenant
+            </a>
+        </div>
     </div>
 </div>
 
@@ -141,7 +151,17 @@
                             </span>
                         </td>
                         <td style="padding: 16px 24px; text-align: center;">
-                            <div style="display: flex; gap: 8px; justify-content: center;">
+                            <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+                                @if($tenant->status === 'active')
+                                <a href="{{ route('admin.tenants.leave', $tenant) }}" style="padding: 8px 12px; background: #fff3e0; color: #e65100; border: 1px solid #ffe0b2; border-radius: 6px; text-decoration: none; font-weight: 500; font-size: 12px; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px;" onmouseover="this.style.backgroundColor='#ffe0b2'" onmouseout="this.style.backgroundColor='#fff3e0'" title="Process tenant leave">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                        <polyline points="16 17 21 12 16 7"></polyline>
+                                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                                    </svg>
+                                    Leave
+                                </a>
+                                @endif
                                 <a href="{{ route('admin.tenants.edit', $tenant) }}" style="padding: 8px 12px; background: #f5f5f7; color: #0071e3; border: 1px solid #d5d5d7; border-radius: 6px; text-decoration: none; font-weight: 500; font-size: 12px; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px;" onmouseover="this.style.backgroundColor='#e8e8ea'" onmouseout="this.style.backgroundColor='#f5f5f7'">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>

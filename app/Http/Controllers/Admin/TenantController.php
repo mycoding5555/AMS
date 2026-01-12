@@ -15,7 +15,7 @@ class TenantController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Tenant::with('apartment');
+        $query = Tenant::with('apartment')->notArchived();
         
         // Filter by room/apartment if room_id is provided
         if ($request->has('room_id') && $request->room_id) {
@@ -150,5 +150,66 @@ class TenantController extends Controller
         $tenant->delete();
 
         return redirect()->route('admin.tenants.index')->with('success', 'Tenant deleted successfully!');
+    }
+
+    /**
+     * Show the tenant leave form
+     */
+    public function leaveForm(Tenant $tenant)
+    {
+        if ($tenant->isArchived()) {
+            return redirect()->route('admin.tenants.index')
+                ->with('error', 'This tenant has already left.');
+        }
+
+        $tenant->load('apartment.floor');
+
+        // Calculate stay duration for display
+        $stayDuration = $tenant->getStayDurationFormatted();
+        $stayDays = $tenant->getStayDurationDays();
+
+        // Calculate estimated rent based on monthly rent and stay duration
+        $monthlyRent = $tenant->apartment->monthly_rent ?? 0;
+        $estimatedTotalRent = ($stayDays / 30) * $monthlyRent;
+
+        return view('admin.tenants.leave', [
+            'tenant' => $tenant,
+            'stayDuration' => $stayDuration,
+            'stayDays' => $stayDays,
+            'estimatedTotalRent' => $estimatedTotalRent,
+            'monthlyRent' => $monthlyRent
+        ]);
+    }
+
+    /**
+     * Process tenant leave and archive
+     */
+    public function processLeave(Request $request, Tenant $tenant)
+    {
+        if ($tenant->isArchived()) {
+            return redirect()->route('admin.tenants.index')
+                ->with('error', 'This tenant has already left.');
+        }
+
+        $validated = $request->validate([
+            'move_out_date' => 'required|date|after_or_equal:' . $tenant->move_in_date->format('Y-m-d'),
+            'leave_reason' => 'nullable|string|max:1000',
+            'total_rent_paid' => 'required|numeric|min:0',
+            'final_utility_charges' => 'required|numeric|min:0',
+            'final_other_charges' => 'required|numeric|min:0',
+            'invoice_notes' => 'nullable|string|max:1000',
+        ]);
+
+        // Archive the tenant
+        $tenant->archive($validated);
+
+        // Optionally generate PDF automatically
+        if ($request->has('generate_invoice')) {
+            return redirect()->route('admin.tenants.archived.invoice.download', $tenant)
+                ->with('success', 'Tenant has been archived successfully! Invoice is downloading.');
+        }
+
+        return redirect()->route('admin.tenants.archived.index')
+            ->with('success', 'Tenant has left and been archived successfully!');
     }
 }

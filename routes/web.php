@@ -27,6 +27,19 @@ Route::middleware(['auth', 'check.status'])->group(function () {
         Route::resource('apartments', Admin\ApartmentController::class);
         Route::resource('rooms', Admin\RoomController::class);
         Route::resource('tenants', Admin\TenantController::class);
+        
+        // Tenant Leave Routes
+        Route::get('tenants/{tenant}/leave', [Admin\TenantController::class, 'leaveForm'])->name('tenants.leave');
+        Route::post('tenants/{tenant}/leave', [Admin\TenantController::class, 'processLeave'])->name('tenants.leave.process');
+        
+        // Archived Tenants Routes
+        Route::get('tenants-archived', [Admin\ArchivedTenantController::class, 'index'])->name('tenants.archived.index');
+        Route::get('tenants-archived/{tenant}', [Admin\ArchivedTenantController::class, 'show'])->name('tenants.archived.show');
+        Route::post('tenants-archived/{tenant}/restore', [Admin\ArchivedTenantController::class, 'restore'])->name('tenants.archived.restore');
+        Route::get('tenants-archived/{tenant}/invoice', [Admin\ArchivedTenantController::class, 'viewInvoice'])->name('tenants.archived.invoice.view');
+        Route::get('tenants-archived/{tenant}/invoice/download', [Admin\ArchivedTenantController::class, 'generateInvoice'])->name('tenants.archived.invoice.download');
+        Route::delete('tenants-archived/{tenant}', [Admin\ArchivedTenantController::class, 'destroy'])->name('tenants.archived.destroy');
+        
         Route::get('expenses/breakeven', [Admin\ExpenseController::class, 'breakeven'])->name('expenses.breakeven');
         Route::post('expenses/sync-payments', [Admin\ExpenseController::class, 'syncPayments'])->name('expenses.sync-payments');
         Route::resource('expenses', Admin\ExpenseController::class);
