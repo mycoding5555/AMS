@@ -51,6 +51,10 @@ Route::middleware(['auth', 'check.status'])->group(function () {
          Route::get('apartments', [Admin\ApartmentController::class,'index'])->name('apartments.index');
         Route::post('apartments', [Admin\ApartmentController::class,'store'])->name('apartments.store');
         Route::put('apartments/{apartment}', [Admin\ApartmentController::class,'update'])->name('apartments.update');
+        
+        // Settings Routes
+        Route::get('settings', [Admin\SettingController::class, 'index'])->name('settings.index');
+        Route::post('settings', [Admin\SettingController::class, 'update'])->name('settings.update');
 
     });
 
