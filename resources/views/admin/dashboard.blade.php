@@ -36,19 +36,7 @@
 
 {{-- KPI Cards --}}
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 32px;">
-    <div style="background: white; border: 1px solid #d5d5d7; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.12);">
-        <div style="display: flex; justify-content: space-between; align-items: start;">
-            <div>
-                <p style="color: #86868b; font-size: 14px; font-weight: 500; margin: 0 0 12px 0;">Total Revenue (Payments)</p>
-                <h2 style="color: #1d1d1f; font-size: 32px; font-weight: 600; margin: 0;">${{ number_format($totalRevenue, 2) }}</h2>
-            </div>
-            <div style="width: 56px; height: 56px; background: #f5f5f7; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #0071e3;">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-                </svg>
-            </div>
-        </div>
-    </div>
+  
 
     <div style="background: white; border: 1px solid #d5d5d7; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.12);">
         <div style="display: flex; justify-content: space-between; align-items: start;">
