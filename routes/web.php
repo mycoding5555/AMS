@@ -40,9 +40,21 @@ Route::middleware(['auth', 'check.status'])->group(function () {
         Route::get('tenants-archived/{tenant}/invoice/download', [Admin\ArchivedTenantController::class, 'generateInvoice'])->name('tenants.archived.invoice.download');
         Route::delete('tenants-archived/{tenant}', [Admin\ArchivedTenantController::class, 'destroy'])->name('tenants.archived.destroy');
         
+        // Revenue & Expense Routes (renamed from Expenses)
         Route::get('expenses/breakeven', [Admin\ExpenseController::class, 'breakeven'])->name('expenses.breakeven');
         Route::post('expenses/sync-payments', [Admin\ExpenseController::class, 'syncPayments'])->name('expenses.sync-payments');
         Route::resource('expenses', Admin\ExpenseController::class);
+        
+        // Fiscal Period Routes
+        Route::resource('fiscal-periods', Admin\FiscalPeriodController::class);
+        Route::post('fiscal-periods/{fiscalPeriod}/set-current', [Admin\FiscalPeriodController::class, 'setAsCurrent'])->name('fiscal-periods.set-current');
+        Route::post('fiscal-periods/{fiscalPeriod}/close', [Admin\FiscalPeriodController::class, 'close'])->name('fiscal-periods.close');
+        Route::get('fiscal-periods/{fiscalPeriod}/export', [Admin\FiscalPeriodController::class, 'exportClosingBalance'])->name('fiscal-periods.export');
+        Route::get('fiscal-periods/{fiscalPeriod}/download', [Admin\FiscalPeriodController::class, 'downloadClosingBalance'])->name('fiscal-periods.download');
+        
+        // Balance Sheet Routes
+        Route::resource('balance-sheet', Admin\BalanceSheetController::class);
+        
         Route::get('users', [Admin\UserController::class, 'index'])->name('users.index');
         Route::put('users/{user}', [Admin\UserController::class, 'update'])->name('users.update');
         Route::get('floors', [Admin\FloorController::class, 'index'])->name('floors.index');

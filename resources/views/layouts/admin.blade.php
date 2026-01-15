@@ -120,7 +120,7 @@
             <li><a href="{{ route('admin.tenants.index') }}" class="nav-link text-white"><i class="bi bi-person-badge me-2"></i>Tenant</a></li>
             <li><a href="{{ route('admin.tenants.archived.index') }}" class="nav-link text-white"><i class="bi bi-archive me-2"></i>Archived Tenants</a></li>
             <li><a href="{{ route('admin.apartments.index') }}" class="nav-link text-white"><i class="bi bi-building me-2"></i>Apartments</a></li>
-            <li><a href="{{ route('admin.expenses.index') }}" class="nav-link text-white"><i class="bi bi-cash-stack me-2"></i>Expenses</a></li>
+            <li><a href="{{ route('admin.expenses.index') }}" class="nav-link text-white"><i class="bi bi-cash-coin me-2"></i>Revenue & Expense</a></li>
         </ul>
     </nav>
 

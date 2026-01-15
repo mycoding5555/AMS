@@ -5,7 +5,7 @@
 <div style="background: linear-gradient(135deg, #f5f5f7 0%, #ffffff 100%); border-radius: 20px; padding: 32px; margin-bottom: 32px;">
     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
         <div>
-            <h1 style="font-size: 32px; font-weight: 600; color: #1d1d1f; margin: 0;">Accounts & Expenses</h1>
+            <h1 style="font-size: 32px; font-weight: 600; color: #1d1d1f; margin: 0;">Revenue & Expense</h1>
             <p style="color: #86868b; margin: 8px 0 0 0;">Manage income, expenses, and financial tracking</p>
         </div>
         <div style="display: flex; gap: 12px; flex-wrap: wrap;">
@@ -15,9 +15,36 @@
             <a href="{{ route('admin.expenses.breakeven') }}" style="padding: 12px 24px; background: #34c759; color: white; border-radius: 8px; text-decoration: none; font-weight: 600;">
                 <i class="bi bi-graph-up me-2"></i>Break-Even Analysis
             </a>
+            <a href="{{ route('admin.fiscal-periods.index') }}" style="padding: 12px 24px; background: #5856d6; color: white; border-radius: 8px; text-decoration: none; font-weight: 600;">
+                <i class="bi bi-calendar-range me-2"></i>Fiscal Periods
+            </a>
+            <a href="{{ route('admin.balance-sheet.index') }}" style="padding: 12px 24px; background: #ff9500; color: white; border-radius: 8px; text-decoration: none; font-weight: 600;">
+                <i class="bi bi-clipboard-data me-2"></i>Balance Sheet
+            </a>
         </div>
     </div>
 </div>
+
+{{-- Current Fiscal Period Info --}}
+@if($currentFiscalPeriod)
+<div style="background: linear-gradient(135deg, #007aff20 0%, #007aff10 100%); border: 1px solid #007aff40; border-radius: 12px; padding: 16px; margin-bottom: 24px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <i class="bi bi-calendar-check" style="font-size: 24px; color: #007aff;"></i>
+            <div>
+                <p style="font-weight: 600; color: #1e40af; margin: 0;">Current Fiscal Period: {{ $currentFiscalPeriod->name }}</p>
+                <p style="color: #1e40af; margin: 4px 0 0 0; font-size: 14px;">
+                    {{ $currentFiscalPeriod->opening_date->format('M d, Y') }} - {{ $currentFiscalPeriod->closing_date->format('M d, Y') }}
+                    | Opening Balance: ${{ number_format($currentFiscalPeriod->opening_balance, 2) }}
+                </p>
+            </div>
+        </div>
+        <a href="{{ route('admin.fiscal-periods.show', $currentFiscalPeriod) }}" style="padding: 8px 16px; background: #007aff; color: white; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 13px;">
+            View Period
+        </a>
+    </div>
+</div>
+@endif
 
 {{-- Sync Payments Alert --}}
 @if($unsyncedPayments > 0)

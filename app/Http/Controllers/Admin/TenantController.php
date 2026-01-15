@@ -7,6 +7,7 @@ use App\Models\Tenant;
 use App\Models\Apartment;
 use App\Models\Account;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 
@@ -219,7 +220,7 @@ class TenantController extends Controller
                 'transaction_date' => $moveOutDate,
                 'month' => $moveOutDate->month,
                 'year' => $moveOutDate->year,
-                'user_id' => auth()->id(),
+                'user_id' => Auth::id(),
                 'reference_number' => 'TNT-' . str_pad($tenant->id, 6, '0', STR_PAD_LEFT),
                 'notes' => 'Tenant leave - Stay duration: ' . $tenant->getStayDurationFormatted()
             ]);
@@ -236,7 +237,7 @@ class TenantController extends Controller
                 'transaction_date' => $moveOutDate,
                 'month' => $moveOutDate->month,
                 'year' => $moveOutDate->year,
-                'user_id' => auth()->id(),
+                'user_id' => Auth::id(),
                 'reference_number' => 'UTL-' . str_pad($tenant->id, 6, '0', STR_PAD_LEFT),
                 'notes' => 'Tenant leave utility charges'
             ]);
@@ -253,7 +254,7 @@ class TenantController extends Controller
                 'transaction_date' => $moveOutDate,
                 'month' => $moveOutDate->month,
                 'year' => $moveOutDate->year,
-                'user_id' => auth()->id(),
+                'user_id' => Auth::id(),
                 'reference_number' => 'OTH-' . str_pad($tenant->id, 6, '0', STR_PAD_LEFT),
                 'notes' => 'Tenant leave other charges (damages, cleaning, etc.)'
             ]);

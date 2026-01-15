@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Account extends Model
 {
     protected $fillable = [
+        'fiscal_period_id',
         'account_type',
         'category',
         'cost_type',
@@ -84,6 +85,11 @@ class Account extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function fiscalPeriod()
+    {
+        return $this->belongsTo(FiscalPeriod::class);
     }
 
     public function getCategoryLabelAttribute()

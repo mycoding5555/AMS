@@ -5,8 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Account;
 use App\Models\Payment;
+use App\Models\FiscalPeriod;
+use App\Models\BalanceSheetItem;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class ExpenseController extends Controller
 {
@@ -18,9 +21,18 @@ class ExpenseController extends Controller
         $month = $request->get('month', now()->month);
         $year = $request->get('year', now()->year);
         $view = $request->get('view', 'all'); // all, income, expense, breakeven
+        $fiscalPeriodId = $request->get('fiscal_period_id');
+
+        // Get current fiscal period
+        $currentFiscalPeriod = FiscalPeriod::current()->first();
+        $fiscalPeriods = FiscalPeriod::orderBy('opening_date', 'desc')->get();
 
         // Get all accounts for the period
         $accountsQuery = Account::forMonth($month, $year)->orderBy('transaction_date', 'desc');
+
+        if ($fiscalPeriodId) {
+            $accountsQuery->where('fiscal_period_id', $fiscalPeriodId);
+        }
 
         if ($view === 'income') {
             $accountsQuery->income();
@@ -56,7 +68,10 @@ class ExpenseController extends Controller
             'month',
             'year',
             'view',
-            'unsyncedPayments'
+            'unsyncedPayments',
+            'currentFiscalPeriod',
+            'fiscalPeriods',
+            'fiscalPeriodId'
         ));
     }
 
@@ -67,7 +82,12 @@ class ExpenseController extends Controller
     {
         $categories = Account::$categoryLabels;
         $costTypes = Account::$costTypeLabels;
-        return view('admin.expenses.create', compact('categories', 'costTypes'));
+        $fiscalPeriods = FiscalPeriod::where('status', '!=', 'closed')
+            ->orderBy('opening_date', 'desc')
+            ->get();
+        $currentFiscalPeriod = FiscalPeriod::current()->first();
+        
+        return view('admin.expenses.create', compact('categories', 'costTypes', 'fiscalPeriods', 'currentFiscalPeriod'));
     }
 
     /**
@@ -76,6 +96,7 @@ class ExpenseController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'fiscal_period_id' => 'nullable|exists:fiscal_periods,id',
             'account_type' => 'required|in:income,expense',
             'category' => 'required|string',
             'cost_type' => 'required|in:fixed,variable,bank,income',
@@ -89,7 +110,35 @@ class ExpenseController extends Controller
         $date = Carbon::parse($validated['transaction_date']);
         $validated['month'] = $date->month;
         $validated['year'] = $date->year;
-        $validated['user_id'] = auth()->id();
+        $validated['user_id'] = Auth::id();
+
+        // Auto-assign to current fiscal period if not specified
+        if (empty($validated['fiscal_period_id'])) {
+            $currentPeriod = FiscalPeriod::current()->first();
+            if ($currentPeriod) {
+                $validated['fiscal_period_id'] = $currentPeriod->id;
+            }
+        }
+        
+        // Validate transaction date is within the fiscal period
+        if (!empty($validated['fiscal_period_id'])) {
+            $fiscalPeriod = FiscalPeriod::find($validated['fiscal_period_id']);
+            if ($fiscalPeriod) {
+                if ($fiscalPeriod->status === 'closed') {
+                    return redirect()->back()
+                        ->withInput()
+                        ->withErrors(['fiscal_period_id' => 'Cannot add transactions to a closed fiscal period.']);
+                }
+                
+                if ($date->lt($fiscalPeriod->opening_date) || $date->gt($fiscalPeriod->closing_date)) {
+                    return redirect()->back()
+                        ->withInput()
+                        ->withErrors(['transaction_date' => 'Transaction date must be within the fiscal period dates (' . 
+                            $fiscalPeriod->opening_date->format('M d, Y') . ' - ' . 
+                            $fiscalPeriod->closing_date->format('M d, Y') . ').']);
+                }
+            }
+        }
 
         Account::create($validated);
 
@@ -114,7 +163,11 @@ class ExpenseController extends Controller
         $account = Account::findOrFail($id);
         $categories = Account::$categoryLabels;
         $costTypes = Account::$costTypeLabels;
-        return view('admin.expenses.edit', compact('account', 'categories', 'costTypes'));
+        $fiscalPeriods = FiscalPeriod::where('status', '!=', 'closed')
+            ->orderBy('opening_date', 'desc')
+            ->get();
+        
+        return view('admin.expenses.edit', compact('account', 'categories', 'costTypes', 'fiscalPeriods'));
     }
 
     /**
@@ -125,6 +178,7 @@ class ExpenseController extends Controller
         $account = Account::findOrFail($id);
 
         $validated = $request->validate([
+            'fiscal_period_id' => 'nullable|exists:fiscal_periods,id',
             'account_type' => 'required|in:income,expense',
             'category' => 'required|string',
             'cost_type' => 'required|in:fixed,variable,bank,income',

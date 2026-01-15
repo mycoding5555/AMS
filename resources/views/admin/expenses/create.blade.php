@@ -5,7 +5,7 @@
 <div style="background: linear-gradient(135deg, #f5f5f7 0%, #ffffff 100%); border-radius: 20px; padding: 32px; margin-bottom: 32px;">
     <div style="display: flex; justify-content: space-between; align-items: center;">
         <div>
-            <h1 style="font-size: 32px; font-weight: 600; color: #1d1d1f; margin: 0;">Add Account Entry</h1>
+            <h1 style="font-size: 32px; font-weight: 600; color: #1d1d1f; margin: 0;">Add Revenue/Expense Entry</h1>
             <p style="color: #86868b; margin: 8px 0 0 0;">Record income or expense transaction</p>
         </div>
         <a href="{{ route('admin.expenses.index') }}" style="padding: 12px 24px; background: #f5f5f7; color: #1d1d1f; border-radius: 8px; text-decoration: none; font-weight: 600;">
@@ -29,6 +29,22 @@
         @csrf
 
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px;">
+            {{-- Fiscal Period --}}
+            <div>
+                <label style="display: block; color: #86868b; font-size: 13px; font-weight: 600; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">
+                    Fiscal Period
+                </label>
+                <select name="fiscal_period_id"
+                    style="width: 100%; padding: 12px; border: 1px solid #d5d5d7; border-radius: 8px; background: white; font-size: 14px;">
+                    <option value="">Auto-assign to current</option>
+                    @foreach($fiscalPeriods as $period)
+                        <option value="{{ $period->id }}" {{ (old('fiscal_period_id', $currentFiscalPeriod?->id) == $period->id) ? 'selected' : '' }}>
+                            {{ $period->name }} {{ $period->is_current ? '(Current)' : '' }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
             {{-- Account Type --}}
             <div>
                 <label style="display: block; color: #86868b; font-size: 13px; font-weight: 600; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">
@@ -37,7 +53,7 @@
                 <select name="account_type" id="account_type" required onchange="updateCategories()"
                     style="width: 100%; padding: 12px; border: 1px solid #d5d5d7; border-radius: 8px; background: white; font-size: 14px;">
                     <option value="">Select Type</option>
-                    <option value="income" {{ old('account_type') == 'income' ? 'selected' : '' }}>Income</option>
+                    <option value="income" {{ old('account_type') == 'income' ? 'selected' : '' }}>Revenue (Income)</option>
                     <option value="expense" {{ old('account_type') == 'expense' ? 'selected' : '' }}>Expense</option>
                 </select>
             </div>
@@ -50,7 +66,7 @@
                 <select name="cost_type" id="cost_type" required onchange="updateCategories()"
                     style="width: 100%; padding: 12px; border: 1px solid #d5d5d7; border-radius: 8px; background: white; font-size: 14px;">
                     <option value="">Select Cost Type</option>
-                    <option value="income" {{ old('cost_type') == 'income' ? 'selected' : '' }}>Income</option>
+                    <option value="income" {{ old('cost_type') == 'income' ? 'selected' : '' }}>Revenue</option>
                     <option value="fixed" {{ old('cost_type') == 'fixed' ? 'selected' : '' }}>Fixed Cost</option>
                     <option value="variable" {{ old('cost_type') == 'variable' ? 'selected' : '' }}>Variable Cost</option>
                     <option value="bank" {{ old('cost_type') == 'bank' ? 'selected' : '' }}>Bank/Financial</option>
