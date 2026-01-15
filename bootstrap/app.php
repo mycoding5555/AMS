@@ -14,6 +14,16 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,
             'check.status' => \App\Http\Middleware\CheckUserStatus::class,
+            'maintenance' => \App\Http\Middleware\MaintenanceMode::class,
+            'setlocale' => \App\Http\Middleware\SetLocale::class,
+            'settimezone' => \App\Http\Middleware\SetTimezone::class,
+        ]);
+        
+        // Apply locale and timezone to all web routes
+        $middleware->web(append: [
+            \App\Http\Middleware\SetLocale::class,
+            \App\Http\Middleware\SetTimezone::class,
+            \App\Http\Middleware\MaintenanceMode::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

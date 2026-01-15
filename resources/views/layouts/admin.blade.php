@@ -1,8 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+@php
+    $theme = \App\Models\Setting::get('theme', 'light');
+    $language = \App\Models\Setting::get('language', 'en');
+    $appName = \App\Models\Setting::get('app_name', 'AMS');
+@endphp
+<html lang="{{ $language }}" data-bs-theme="{{ $theme }}">
 <head>
     <meta charset="UTF-8">
-    <title>Admin | AMS</title>
+    <title>{{ __('app.dashboard') }} | {{ $appName }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     {{-- Bootstrap --}}
@@ -14,7 +19,70 @@
     {{-- Chart.js --}}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+    {{-- Khmer Font --}}
+    @if($language === 'km')
+    <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&display=swap" rel="stylesheet">
+    @endif
+
     <style>
+        /* Khmer Font */
+        @if($language === 'km')
+        body, .nav-link, h1, h2, h3, h4, h5, h6, p, span, label, button, input, select, textarea {
+            font-family: 'Battambang', cursive, sans-serif !important;
+        }
+        @endif
+        
+        /* Dark Theme Overrides */
+        [data-bs-theme="dark"] {
+            --bs-body-bg: #1a1d21;
+            --bs-body-color: #e9ecef;
+        }
+        
+        [data-bs-theme="dark"] .bg-light {
+            background-color: #1a1d21 !important;
+        }
+        
+        [data-bs-theme="dark"] .bg-white {
+            background-color: #212529 !important;
+        }
+        
+        [data-bs-theme="dark"] .card {
+            background-color: #212529;
+            border-color: #343a40;
+        }
+        
+        [data-bs-theme="dark"] .table {
+            --bs-table-bg: #212529;
+            --bs-table-striped-bg: #2c3034;
+            --bs-table-hover-bg: #323539;
+            color: #e9ecef;
+        }
+        
+        [data-bs-theme="dark"] .form-control,
+        [data-bs-theme="dark"] .form-select {
+            background-color: #2b3035;
+            border-color: #495057;
+            color: #e9ecef;
+        }
+        
+        [data-bs-theme="dark"] .navbar-light {
+            background-color: #212529 !important;
+        }
+        
+        [data-bs-theme="dark"] .navbar-text,
+        [data-bs-theme="dark"] .text-muted {
+            color: #adb5bd !important;
+        }
+        
+        [data-bs-theme="dark"] .modal-content {
+            background-color: #212529;
+            border-color: #495057;
+        }
+        
+        [data-bs-theme="dark"] .btn-close {
+            filter: invert(1) grayscale(100%) brightness(200%);
+        }
+
         /* Sidebar styles */
         .sidebar {
             width: 250px;
@@ -98,7 +166,7 @@
         }
     </style>
 </head>
-<body class="bg-light">
+<body class="{{ $theme === 'dark' ? 'bg-dark' : 'bg-light' }}">
 
 {{-- Overlay for mobile --}}
 <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
@@ -107,39 +175,40 @@
     {{-- Sidebar --}}
     <nav class="sidebar bg-dark text-white p-3" id="sidebar">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h5 class="mb-0">AMS Admin</h5>
+            <h5 class="mb-0">{{ $appName }}</h5>
             <button class="hamburger-btn text-white d-md-none" onclick="toggleSidebar()">
                 <i class="bi bi-x-lg"></i>
             </button>
         </div>
 
         <ul class="nav flex-column gap-2">
-            <li><a href="{{ route('admin.dashboard') }}" class="nav-link text-white"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a></li>
-            <li><a href="{{ route('admin.users.index') }}" class="nav-link text-white"><i class="bi bi-people me-2"></i>Users</a></li>
-            <li><a href="{{ route('admin.rooms.index') }}" class="nav-link text-white"><i class="bi bi-door-open me-2"></i>Room</a></li>
-            <li><a href="{{ route('admin.tenants.index') }}" class="nav-link text-white"><i class="bi bi-person-badge me-2"></i>Tenant</a></li>
-            <li><a href="{{ route('admin.tenants.archived.index') }}" class="nav-link text-white"><i class="bi bi-archive me-2"></i>Archived Tenants</a></li>
-            <li><a href="{{ route('admin.apartments.index') }}" class="nav-link text-white"><i class="bi bi-building me-2"></i>Apartments</a></li>
-            <li><a href="{{ route('admin.expenses.index') }}" class="nav-link text-white"><i class="bi bi-cash-coin me-2"></i>Revenue & Expense</a></li>
+            <li><a href="{{ route('admin.dashboard') }}" class="nav-link text-white {{ request()->routeIs('admin.dashboard') ? 'bg-primary rounded' : '' }}"><i class="bi bi-speedometer2 me-2"></i>{{ __('app.dashboard') }}</a></li>
+            <li><a href="{{ route('admin.users.index') }}" class="nav-link text-white {{ request()->routeIs('admin.users.*') ? 'bg-primary rounded' : '' }}"><i class="bi bi-people me-2"></i>{{ __('app.users') }}</a></li>
+            <li><a href="{{ route('admin.rooms.index') }}" class="nav-link text-white {{ request()->routeIs('admin.rooms.*') ? 'bg-primary rounded' : '' }}"><i class="bi bi-door-open me-2"></i>{{ __('app.rooms') }}</a></li>
+            <li><a href="{{ route('admin.tenants.index') }}" class="nav-link text-white {{ request()->routeIs('admin.tenants.index') || request()->routeIs('admin.tenants.create') || request()->routeIs('admin.tenants.edit') || request()->routeIs('admin.tenants.show') ? 'bg-primary rounded' : '' }}"><i class="bi bi-person-badge me-2"></i>{{ __('app.tenants') }}</a></li>
+            <li><a href="{{ route('admin.tenants.archived.index') }}" class="nav-link text-white {{ request()->routeIs('admin.tenants.archived.*') ? 'bg-primary rounded' : '' }}"><i class="bi bi-archive me-2"></i>{{ __('app.archived_tenants') }}</a></li>
+            <li><a href="{{ route('admin.apartments.index') }}" class="nav-link text-white {{ request()->routeIs('admin.apartments.*') ? 'bg-primary rounded' : '' }}"><i class="bi bi-building me-2"></i>{{ __('app.apartments') }}</a></li>
+            <li><a href="{{ route('admin.expenses.index') }}" class="nav-link text-white {{ request()->routeIs('admin.expenses.*') ? 'bg-primary rounded' : '' }}"><i class="bi bi-cash-stack me-2"></i>{{ __('app.expenses') }}</a></li>
+            <li><a href="{{ route('admin.settings.index') }}" class="nav-link text-white {{ request()->routeIs('admin.settings.*') ? 'bg-primary rounded' : '' }}"><i class="bi bi-gear me-2"></i>{{ __('app.settings') }}</a></li>
         </ul>
     </nav>
 
     {{-- Main Content --}}
     <div class="main-content flex-grow-1" id="mainContent">
         {{-- Topbar --}}
-        <nav class="navbar navbar-light bg-white shadow-sm px-4">
+        <nav class="navbar {{ $theme === 'dark' ? 'navbar-dark bg-dark' : 'navbar-light bg-white' }} shadow-sm px-4">
             <div class="d-flex align-items-center">
-                <button class="hamburger-btn me-3" onclick="toggleSidebar()" title="Toggle Sidebar">
+                <button class="hamburger-btn me-3 {{ $theme === 'dark' ? 'text-white' : '' }}" onclick="toggleSidebar()" title="Toggle Sidebar">
                     <i class="bi bi-list" id="hamburgerIcon"></i>
                 </button>
                 <span class="navbar-text">
-                    Welcome, {{ auth()->user()->name }}
+                    {{ __('app.welcome') }}, {{ auth()->user()->name }}
                 </span>
             </div>
 
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
-                <button class="btn btn-outline-danger btn-sm">Logout</button>
+                <button class="btn btn-outline-danger btn-sm">{{ __('app.logout') }}</button>
             </form>
         </nav>
 

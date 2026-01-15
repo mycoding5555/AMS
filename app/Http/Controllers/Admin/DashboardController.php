@@ -9,6 +9,8 @@ use App\Models\Apartment;
 use App\Models\User;
 use App\Models\Tenant;
 use App\Models\Account;
+use App\Models\Setting;
+use App\Helpers\SettingsHelper;
 use Carbon\Carbon;
 
 class DashboardController extends Controller
@@ -100,6 +102,12 @@ class DashboardController extends Controller
         // Break-even
         'breakEvenPoint' => $breakEvenPoint,
         'reachedBreakeven' => $reachedBreakeven,
+
+        // Settings data
+        'currency' => SettingsHelper::getCurrency(),
+        'appStartDate' => SettingsHelper::getStartDate(),
+        'appCloseDate' => SettingsHelper::getCloseDate(),
+        'companyName' => SettingsHelper::getCompanyName(),
 
         'paymentStats' => [
             'paid' => Payment::where('payment_status','paid')->count(),

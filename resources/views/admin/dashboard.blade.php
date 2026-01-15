@@ -1,36 +1,56 @@
 @extends('layouts.admin')
 
 @section('content')
+@php
+    $currencySymbols = [
+        'USD' => '$',
+        'EUR' => '€',
+        'GBP' => '£',
+        'KHR' => '៛',
+        'JPY' => '¥',
+        'AUD' => 'A$',
+    ];
+    $symbol = $currencySymbols[$currency] ?? '$';
+@endphp
 
 <div style="background: linear-gradient(135deg, #f5f5f7 0%, #ffffff 100%); border-radius: 20px; padding: 32px; margin-bottom: 32px;">
-    <h1 style="font-size: 32px; font-weight: 600; color: #1d1d1f; margin: 0;">Dashboard Overview</h1>
-    <p style="color: #86868b; margin: 8px 0 0 0;">Manage your property with ease</p>
+    <h1 style="font-size: 32px; font-weight: 600; color: #1d1d1f; margin: 0;">{{ __('app.dashboard') }}</h1>
+    <p style="color: #86868b; margin: 8px 0 0 0;">
+        @if($companyName)
+            {{ $companyName }}
+        @else
+            {{ __('app.dashboard') }}
+        @endif
+        @if($appStartDate)
+            <span class="badge bg-info ms-2">{{ __('app.start_date') }}: {{ $appStartDate }}</span>
+        @endif
+    </p>
 </div>
 
 {{-- Financial Summary Cards --}}
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px;">
     {{-- Yearly Income --}}
     <div style="background: linear-gradient(135deg, #34c759 0%, #30d158 100%); border-radius: 16px; padding: 20px; color: white;">
-        <p style="font-size: 13px; opacity: 0.9; margin: 0;">Yearly Income</p>
-        <h2 style="font-size: 24px; font-weight: 700; margin: 8px 0 0 0;">${{ number_format($yearlyIncome, 2) }}</h2>
+        <p style="font-size: 13px; opacity: 0.9; margin: 0;">{{ __('app.monthly_income') }}</p>
+        <h2 style="font-size: 24px; font-weight: 700; margin: 8px 0 0 0;">{{ $symbol }}{{ number_format($yearlyIncome, 2) }}</h2>
     </div>
     
     {{-- Yearly Expenses --}}
     <div style="background: linear-gradient(135deg, #ff3b30 0%, #ff453a 100%); border-radius: 16px; padding: 20px; color: white;">
-        <p style="font-size: 13px; opacity: 0.9; margin: 0;">Yearly Expenses</p>
-        <h2 style="font-size: 24px; font-weight: 700; margin: 8px 0 0 0;">${{ number_format($yearlyExpenses, 2) }}</h2>
+        <p style="font-size: 13px; opacity: 0.9; margin: 0;">{{ __('app.monthly_expenses') }}</p>
+        <h2 style="font-size: 24px; font-weight: 700; margin: 8px 0 0 0;">{{ $symbol }}{{ number_format($yearlyExpenses, 2) }}</h2>
     </div>
     
     {{-- Net Profit/Loss --}}
     <div style="background: linear-gradient(135deg, {{ $yearlyProfit >= 0 ? '#007aff' : '#ff9500' }} 0%, {{ $yearlyProfit >= 0 ? '#0a84ff' : '#ff9f0a' }} 100%); border-radius: 16px; padding: 20px; color: white;">
         <p style="font-size: 13px; opacity: 0.9; margin: 0;">Net {{ $yearlyProfit >= 0 ? 'Profit' : 'Loss' }}</p>
-        <h2 style="font-size: 24px; font-weight: 700; margin: 8px 0 0 0;">{{ $yearlyProfit >= 0 ? '+' : '-' }}${{ number_format(abs($yearlyProfit), 2) }}</h2>
+        <h2 style="font-size: 24px; font-weight: 700; margin: 8px 0 0 0;">{{ $yearlyProfit >= 0 ? '+' : '-' }}{{ $symbol }}{{ number_format(abs($yearlyProfit), 2) }}</h2>
     </div>
     
     {{-- Break-Even Status --}}
     <div style="background: linear-gradient(135deg, {{ $reachedBreakeven ? '#5856d6' : '#ff9500' }} 0%, {{ $reachedBreakeven ? '#5e5ce6' : '#ff9f0a' }} 100%); border-radius: 16px; padding: 20px; color: white;">
         <p style="font-size: 13px; opacity: 0.9; margin: 0;">Break-Even</p>
-        <h2 style="font-size: 18px; font-weight: 700; margin: 8px 0 0 0;">{{ $reachedBreakeven ? '✓ Achieved' : '$'.number_format($breakEvenPoint - $yearlyIncome, 0).' needed' }}</h2>
+        <h2 style="font-size: 18px; font-weight: 700; margin: 8px 0 0 0;">{{ $reachedBreakeven ? '✓ Achieved' : $symbol.number_format($breakEvenPoint - $yearlyIncome, 0).' needed' }}</h2>
     </div>
 </div>
 
@@ -41,7 +61,7 @@
     <div style="background: white; border: 1px solid #d5d5d7; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.12);">
         <div style="display: flex; justify-content: space-between; align-items: start;">
             <div>
-                <p style="color: #86868b; font-size: 14px; font-weight: 500; margin: 0 0 12px 0;">Total Users</p>
+                <p style="color: #86868b; font-size: 14px; font-weight: 500; margin: 0 0 12px 0;">{{ __('app.total_users') }}</p>
                 <h2 style="color: #1d1d1f; font-size: 32px; font-weight: 600; margin: 0;">{{ $totalUsers }}</h2>
             </div>
             <div style="width: 56px; height: 56px; background: #f5f5f7; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #0071e3;">
@@ -58,9 +78,9 @@
     <div style="background: white; border: 1px solid #d5d5d7; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.12);">
         <div style="display: flex; justify-content: space-between; align-items: start;">
             <div>
-                <p style="color: #86868b; font-size: 14px; font-weight: 500; margin: 0 0 12px 0;">Total Rooms</p>
+                <p style="color: #86868b; font-size: 14px; font-weight: 500; margin: 0 0 12px 0;">{{ __('app.total_rooms') }}</p>
                 <h2 style="color: #1d1d1f; font-size: 32px; font-weight: 600; margin: 0;">{{ $totalApartments }}</h2>
-                <p style="color: #86868b; font-size: 12px; margin: 8px 0 0 0;">{{ $availableApartments }} available</p>
+                <p style="color: #86868b; font-size: 12px; margin: 8px 0 0 0;">{{ $availableApartments }} {{ __('app.available') }}</p>
             </div>
             <div style="width: 56px; height: 56px; background: #f5f5f7; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #0071e3;">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -76,9 +96,9 @@
     <div style="background: white; border: 1px solid #d5d5d7; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.12);">
         <div style="display: flex; justify-content: space-between; align-items: start;">
             <div>
-                <p style="color: #86868b; font-size: 14px; font-weight: 500; margin: 0 0 12px 0;">Occupancy Rate</p>
+                <p style="color: #86868b; font-size: 14px; font-weight: 500; margin: 0 0 12px 0;">{{ __('app.occupancy_rate') }}</p>
                 <h2 style="color: #1d1d1f; font-size: 32px; font-weight: 600; margin: 0;">{{ $occupancyRate }}%</h2>
-                <p style="color: #86868b; font-size: 12px; margin: 8px 0 0 0;">{{ $occupiedApartments }} occupied</p>
+                <p style="color: #86868b; font-size: 12px; margin: 8px 0 0 0;">{{ $occupiedApartments }} {{ __('app.occupied') }}</p>
             </div>
             <div style="width: 56px; height: 56px; background: #f5f5f7; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #0071e3;">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -96,7 +116,7 @@
     <div style="background: white; border: 1px solid #d5d5d7; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.12);">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <h5 style="font-weight: 600; color: #1d1d1f; margin: 0;">Income vs Expenses (Last 6 Months)</h5>
-            <a href="{{ route('admin.expenses.index') }}" style="font-size: 13px; color: #0071e3; text-decoration: none;">View Details →</a>
+            <a href="{{ route('admin.expenses.index') }}" style="font-size: 13px; color: #0071e3; text-decoration: none;">{{ __('app.view') }} →</a>
         </div>
         <div style="position: relative; min-height: 300px;">
             <canvas id="revenueExpenseChart"></canvas>
